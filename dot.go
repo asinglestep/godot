@@ -14,7 +14,17 @@ type Graph struct {
 	Attr  GraphAttr
 }
 
+func NewGraph() *Graph {
+	g := &Graph{}
+	g.Attr = GraphAttr{}
+	return g
+}
+
 type GraphAttr map[string]string
+
+func (attr GraphAttr) Add(key string, val string) {
+	attr[key] = val
+}
 
 func (attr GraphAttr) String() string {
 	list := []string{}
@@ -50,6 +60,8 @@ type Edge struct {
 
 const dotTemplate = `
 digraph g {
+	{{ .Attr.String }}
+
 	node [ height=.1, shape=record, width=.1 ];
 
 	{{ range .Nodes }}
