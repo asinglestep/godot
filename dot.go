@@ -11,16 +11,28 @@ import (
 type Graph struct {
 	Nodes []*Node
 	Edges []*Edge
+	Attr  GraphAttr
+}
+
+type GraphAttr map[string]string
+
+func (attr GraphAttr) String() string {
+	list := []string{}
+	for k, v := range attr {
+		list = append(list, fmt.Sprintf("%s=%s", k, v))
+	}
+
+	return strings.Join(list, ";\n")
 }
 
 type Node struct {
 	Name string
-	Attr Attr
+	Attr NodeAttr
 }
 
-type Attr map[string]string
+type NodeAttr map[string]string
 
-func (attr Attr) String() string {
+func (attr NodeAttr) String() string {
 	list := []string{}
 	for k, v := range attr {
 		list = append(list, fmt.Sprintf("%s=%s", k, v))
