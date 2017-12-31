@@ -11,9 +11,13 @@ import (
 
 // Graph Graph
 type Graph struct {
-	Nodes Nodes
-	Edges Edges
-	Attr  GraphAttr
+	NodeGlobalAttr NodeAttr // node全局属性
+	Nodes          Nodes
+
+	EdgeGlobalAttr EdgeAttr // edge全局属性
+	Edges          Edges
+
+	Attr GraphAttr
 }
 
 // NewGraph NewGraph
@@ -31,6 +35,16 @@ func (g *Graph) AddNode(node *Node) {
 // AddEdge AddEdge
 func (g *Graph) AddEdge(edge *Edge) {
 	g.Edges.Edges = append(g.Edges.Edges, edge)
+}
+
+// SetNodeGlobalAttr 设置node全局属性
+func (g *Graph) SetNodeGlobalAttr(attr NodeAttr) {
+	g.NodeGlobalAttr = attr
+}
+
+// SetEdgeGlobalAttr 设置edge全局属性
+func (g *Graph) SetEdgeGlobalAttr(attr EdgeAttr) {
+	g.EdgeGlobalAttr = attr
 }
 
 // GraphAttr GraphAttr
@@ -96,6 +110,11 @@ func (attr NodeAttr) String() string {
 	return strings.Join(list, ",")
 }
 
+// Len Len
+func (attr NodeAttr) Len() int {
+	return len(attr)
+}
+
 // Edge Edge
 type Edge struct {
 	Src     string
@@ -130,19 +149,47 @@ func (e *Edges) Sort() []*Edge {
 	return e.Edges
 }
 
+// EdgeAttr EdgeAttr
+type EdgeAttr map[string]string
+
+// String String
+func (attr EdgeAttr) String() string {
+	list := []string{}
+	for k, v := range attr {
+		list = append(list, fmt.Sprintf("%s=%s", k, v))
+	}
+
+	return strings.Join(list, ",")
+}
+
+// Len Len
+func (attr EdgeAttr) Len() int {
+	return len(attr)
+}
+
 // dotTemplate dotTemplate
 const dotTemplate = `
 digraph g {
 	{{ .Attr.String }}
 
-	node [ height=.1, shape=record, width=.1 ];
+	{{ if .NodeGlobalAttr.Len }}
+	{{ printf "node [ %s ];" .NodeGlobalAttr.String }}
+	{{ end }}
+
+	{{ if .EdgeGlobalAttr.Len }}
+	{{ printf "edge [ %s ];" .EdgeGlobalAttr.String }}
+	{{ end }}
 
 	{{ range .Nodes.Sort }}
-	{{ printf "\"%s\" [ %s ];" .Name .Attr.String }}
+	{{ if .Attr.Len }}
+	{{ printf "%s [ %s ];" .Name .Attr.String }}
+	{{ else }}
+	{{ printf "%s;" .Name }}
+	{{ end }}
 	{{ end }}
 
 	{{ range .Edges.Sort }}
-	{{ printf "\"%s\"%s -> \"%s\"%s;" .Src .SrcPort .Dst .DstPort }}
+	{{ printf "%s%s -> %s%s;" .Src .SrcPort .Dst .DstPort }}
 	{{ end }}
 }
 `
