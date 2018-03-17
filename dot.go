@@ -11,7 +11,7 @@ import (
 
 // Graph Graph
 type Graph struct {
-	NodeGlobalAttr NodeAttr // node全局属性
+	NodeGlobalAttr []NodeAttr // node全局属性
 	Nodes          Nodes
 
 	EdgeGlobalAttr EdgeAttr // edge全局属性
@@ -39,7 +39,7 @@ func (g *Graph) AddEdge(edge *Edge) {
 
 // SetNodeGlobalAttr 设置node全局属性
 func (g *Graph) SetNodeGlobalAttr(attr NodeAttr) {
-	g.NodeGlobalAttr = attr
+	g.NodeGlobalAttr = append(g.NodeGlobalAttr, attr)
 }
 
 // SetEdgeGlobalAttr 设置edge全局属性
@@ -172,8 +172,10 @@ const dotTemplate = `
 digraph g {
 	{{ .Attr.String }}
 
-	{{ if .NodeGlobalAttr.Len }}
-	{{ printf "node [ %s ];" .NodeGlobalAttr.String }}
+	{{ range .NodeGlobalAttr }}
+	{{ if .Len }}
+	{{ printf "node [ %s ];" .String }}
+	{{ end }}
 	{{ end }}
 
 	{{ if .EdgeGlobalAttr.Len }}
