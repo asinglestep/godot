@@ -11,6 +11,8 @@
 
 5. ratio: 设置图的长宽比，可以是一个浮点数，也可以是：fill、compress或者auto。
 
+6. rank: same,min,source, max,sink，设置多个节点顺序。
+
 ## 结点属性
 1. shape: 设置结点形状。包括：Mrecord（圆角矩形）、record（矩形）、circle（圆形）、box（矩形，和record略有区别，下面会讲到）、egg（蛋形）、doublecircle（双圆形）、plaintext（纯文本）、 ellipse（椭圆，默认）。
 
